@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Universo del Estudiante | Pomodoro</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #05030d;
+    color: white;
+    overflow: hidden;
+}
+
+/* =========================
+   FONDO DEL AMBIENTE
+========================= */
+
+#video-background {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -3;
+    overflow: hidden;
+    background: #05030d;
+}
+
+#youtube-player {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 177.78vh;
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 56.25vw;
+    transform: translate(-50%, -50%);
+    border: none;
+}
+
+#video-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: rgba(0, 0, 0, 0.08);
+    pointer-events: none;
+}
+
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
+
+.main-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding: 25px;
+}
+
+/* =========================
+   PANEL POMODORO
+========================= */
+
+.pomodoro-panel {
+    width: 330px;
+    max-width: 92vw;
+
+    background: #120b2e;
+
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 25px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.45),
+        0 0 30px rgba(130,70,255,0.15);
+
+    text-align: center;
+
+    backdrop-filter: blur(8px);
+
+    max-height: 94vh;
+    overflow-y: auto;
+}
+
+/* =========================
+   TITULO
+========================= */
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-bottom: 16px;
+}
+
+/* =========================
+   TIMER
+========================= */
+
+.timer-mode {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.timer {
+    font-size: 56px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 5px 0 14px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 7px;
+
+    background: #2b2450;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 100%;
+
+    background: #a98bff;
+
+    transform-origin: left;
+
+    transition: width 1s linear;
+}
+
+/* =========================
+   BOTONES PRINCIPALES
+========================= */
+
+.button-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+
+    margin-bottom: 12px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+
+    font-weight: bold;
+    color: white;
+
+    border-radius: 12px;
+
+    padding: 10px 14px;
+
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+}
+
+.start-btn {
+    background: #7048ff;
+}
+
+.pause-btn {
+    background: #e45d91;
+}
+
+.reset-btn {
+    background: #34304f;
+}
+
+/* =========================
+   CONFIGURACION
+========================= */
+
+.settings {
+    margin-top: 15px;
+
+    padding-top: 15px;
+
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.settings-title {
+    font-size: 13px;
+    font-weight: bold;
+
+    margin-bottom: 10px;
+}
+
+.preset-buttons {
+    display: flex;
+    gap: 6px;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    margin-bottom: 12px;
+}
+
+.preset-buttons button {
+    background: #282147;
+
+    padding: 7px 9px;
+
+    font-size: 11px;
+}
+
+/* =========================
+   TIEMPOS PERSONALIZADOS
+========================= */
+
+.custom-times {
+    display: flex;
+
+    gap: 8px;
+
+    justify-content: center;
+
+    margin-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    width: 50%;
+}
+
+.input-group label {
+    font-size: 10px;
+
+    opacity: 0.8;
+}
+
+.input-group input {
+    width: 100%;
+
+    padding: 8px;
+
+    border-radius: 9px;
+
+    border: 1px solid #514a78;
+
+    background: #0b0720;
+
+    color: white;
+
+    text-align: center;
+
+    font-weight: bold;
+}
+
+.apply-btn {
+    width: 100%;
+
+    background: #3f2a77;
+
+    font-size: 12px;
+}
+
+/* =========================
+   AMBIENTES
+========================= */
+
+.environment-title {
+    font-size: 12px;
+    font-weight: bold;
+
+    margin-top: 17px;
+    margin-bottom: 9px;
+}
+
+.environment-buttons {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 7px;
+}
+
+.environment {
+    padding: 9px 4px;
+
+    font-size: 10px;
+
+    border-radius: 11px;
+
+    border: 2px solid transparent;
+}
+
+.rain {
+    background: #245c78;
+}
+
+.sea {
+    background: #147fa0;
+}
+
+.forest {
+    background: #397044;
+}
+
+.group {
+    background: #8a4d9c;
+}
+
+.environment.active {
+    border-color: white;
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,0.45);
+}
+
+/* =========================
+   SPOTIFY
+========================= */
+
+.spotify-section {
+    margin-top: 16px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.spotify-title {
+    font-size: 12px;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+}
+
+.spotify-section iframe {
+    width: 100%;
+
+    height: 152px;
+
+    border-radius: 12px;
+
+    border: none;
+
+    display: block;
+}
+
+/* =========================
+   ESTADISTICAS
+========================= */
+
+.stats {
+    display: flex;
+
+    justify-content: space-around;
+
+    margin-top: 17px;
+
+    padding-top: 13px;
+
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.stat-number {
+    font-size: 18px;
+
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 9px;
+
+    opacity: 0.65;
+}
+
+/* =========================
+   AMBIENTE ACTUAL
+========================= */
+
+.current-environment {
+    position: fixed;
+
+    left: 25px;
+    bottom: 22px;
+
+    background: rgba(10,5,25,0.85);
+
+    padding: 10px 15px;
+
+    border-radius: 14px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    border: 1px solid rgba(255,255,255,0.18);
+
+    z-index: 5;
+}
+
+/* =========================
+   MOVIL
+========================= */
+
+@media (max-width: 700px) {
+
+    body {
+        overflow: auto;
+    }
+
+    #video-background {
+        position: fixed;
+    }
+
+    .main-container {
+        min-height: 100vh;
+
+        height: auto;
+
+        padding: 15px;
+
+        align-items: flex-end;
+    }
+
+    .pomodoro-panel {
+        width: 100%;
+
+        margin-top: 100px;
+
+        margin-bottom: 20px;
+
+        max-height: none;
+    }
+
+    .timer {
+        font-size: 48px;
+    }
+
+    .current-environment {
+        top: 15px;
+
+        bottom: auto;
+
+        left: 15px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     VIDEO DE FONDO
+========================= -->
+
+<div id="video-background">
+
+    <iframe
+        id="youtube-player"
+        src=""
+        title="Ambiente de estudio"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+
+</div>
+
+<div id="video-overlay"></div>
+
+
+<!-- =========================
+     AMBIENTE ACTUAL
+========================= -->
+
+<div
+    class="current-environment"
+    id="currentEnvironment">
+
+    🌧️ Lluvia & Concentración
+
+</div>
+
+
+<!-- =========================
+     CONTENIDO PRINCIPAL
+========================= -->
+
+<div class="main-container">
+
+    <div class="pomodoro-panel">
+
+        <div class="logo">
+            🚀 Universo del Estudiante
+        </div>
+
+        <div class="subtitle">
+            Tu espacio para concentrarte
+        </div>
+
+
+        <!-- TIMER -->
+
+        <div
+            class="timer-mode"
+            id="timerMode">
+
+            🧠 Tiempo de estudio
+
+        </div>
+
+        <div
+            class="timer"
+            id="timer">
+
+            25:00
+
+        </div>
+
+
+        <!-- BARRA -->
+
+        <div class="progress-container">
+
+            <div
+                class="progress-bar"
+                id="progressBar">
+            </div>
+
+        </div>
+
+
+        <!-- BOTONES -->
+
+        <div class="button-row">
+
+            <button
+                class="start-btn"
+                onclick="startTimer()">
+
+                ▶ Iniciar
+
+            </button>
+
+            <button
+                class="pause-btn"
+                onclick="pauseTimer()">
+
+                ⏸ Pausar
+
+            </button>
+
+            <button
+                class="reset-btn"
+                onclick="resetTimer()">
+
+                ↻
+
+            </button>
+
+        </div>
+
+
+        <!-- CONFIGURACION -->
+
+        <div class="settings">
+
+            <div class="settings-title">
+
+                ⚙️ Personalizá tu sesión
+
+            </div>
+
+
+            <div class="preset-buttons">
+
+                <button
+                    onclick="setPreset(25,5)">
+
+                    25 / 5
+
+                </button>
+
+                <button
+                    onclick="setPreset(50,10)">
+
+                    50 / 10
+
+                </button>
+
+                <button
+                    onclick="setPreset(90,20)">
+
+                    90 / 20
+
+                </button>
+
+            </div>
+
+
+            <div class="custom-times">
+
+                <div class="input-group">
+
+                    <label>
+                        📚 Estudio
+                    </label>
+
+                    <input
+                        type="number"
+                        id="studyInput"
+                        min="1"
+                        max="180"
+                        value="25">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        ☕ Descanso
+                    </label>
+
+                    <input
+                        type="number"
+                        id="breakInput"
+                        min="1"
+                        max="60"
+                        value="5">
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="apply-btn"
+                onclick="applyCustomTime()">
+
+                Aplicar tiempo personalizado
+
+            </button>
+
+        </div>
+
+
+        <!-- AMBIENTES -->
+
+        <div class="environment-title">
+
+            🌌 Elegí tu ambiente
+
+        </div>
+
+
+        <div class="environment-buttons">
+
+            <button
+                class="environment rain active"
+                onclick="changeEnvironment('rain')">
+
+                🌧️
+                <br>
+                Lluvia
+
+            </button>
+
+
+            <button
+                class="environment sea"
+                onclick="changeEnvironment('sea')">
+
+                🌊
+                <br>
+                Mar
+
+            </button>
+
+
+            <button
+                class="environment forest"
+                onclick="changeEnvironment('forest')">
+
+                🌲
+                <br>
+                Bosque
+
+            </button>
+
+
+            <button
+                class="environment group"
+                onclick="changeEnvironment('group')">
+
+                👥
+                <br>
+                Grupo
+
+            </button>
+
+        </div>
+
+
+        <!-- SPOTIFY -->
+
+        <div class="spotify-section">
+
+            <div class="spotify-title">
+
+                🎧 Música para estudiar
+
+            </div>
+
+            <iframe
+                src="https://open.spotify.com/embed/playlist/27Sg4meY5SgyhwG8rs5uWm"
+                width="100%"
+                height="152"
+                frameborder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+
+            </iframe>
+
+        </div>
+
+
+        <!-- ESTADISTICAS -->
+
+        <div class="stats">
+
+            <div>
+
+                <div
+                    class="stat-number"
+                    id="sessions">
+
+                    0
+
+                </div>
+
+                <div class="stat-label">
+
+                    SESIONES
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div
+                    class="stat-number"
+                    id="minutes">
+
+                    0
+
+                </div>
+
+                <div class="stat-label">
+
+                    MINUTOS
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   VIDEOS
+========================= */
+
+const environments = {
+
+    rain: {
+        video: "mPZkdNFkNps",
+        name: "🌧️ Lluvia & Concentración"
+    },
+
+    sea: {
+        video: "-XqTEu_l1uw",
+        name: "🌊 Mar & Inspiración"
+    },
+
+    forest: {
+        video: "y8UWOLDCO3g",
+        name: "🌲 Bosque & Inspiración"
+    },
+
+    group: {
+        video: "S12ZPZ3pQXk",
+        name: "👥 Estudio acompañado"
+    }
+
+};
+
+
+/* =========================
+   VARIABLES DEL TIMER
+========================= */
+
+let studyMinutes = 25;
+
+let breakMinutes = 5;
+
+let isStudyTime = true;
+
+let totalSeconds =
+    studyMinutes * 60;
+
+let remainingSeconds =
+    totalSeconds;
+
+let timerInterval = null;
+
+let isRunning = false;
+
+
+/* =========================
+   ELEMENTOS
+========================= */
+
+const timerElement =
+    document.getElementById("timer");
+
+const modeElement =
+    document.getElementById("timerMode");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+const currentEnvironment =
+    document.getElementById("currentEnvironment");
+
+const youtubePlayer =
+    document.getElementById("youtube-player");
+
+
+/* =========================
+   CARGAR VIDEO
+========================= */
+
+function loadVideo(videoId) {
+
+    youtubePlayer.src =
+        "https://www.youtube.com/embed/" +
+        videoId +
+        "?autoplay=1" +
+        "&mute=1" +
+        "&controls=0" +
+        "&loop=1" +
+        "&playlist=" +
+        videoId +
+        "&playsinline=1" +
+        "&rel=0";
+
+}
+
+
+/* =========================
+   CAMBIAR AMBIENTE
+========================= */
+
+function changeEnvironment(environment) {
+
+    const selected =
+        environments[environment];
+
+    if (!selected) return;
+
+
+    loadVideo(selected.video);
+
+
+    currentEnvironment.textContent =
+        selected.name;
+
+
+    document
+        .querySelectorAll(".environment")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+    document
+        .querySelector("." + environment)
+        .classList.add("active");
+
+
+    localStorage.setItem(
+        "selectedEnvironment",
+        environment
+    );
+
+}
+
+
+/* =========================
+   ACTUALIZAR TIMER
+========================= */
+
+function updateDisplay() {
+
+    const minutes =
+        Math.floor(remainingSeconds / 60);
+
+    const seconds =
+        remainingSeconds % 60;
+
+
+    timerElement.textContent =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
+
+
+    const percentage =
+        remainingSeconds /
+        totalSeconds *
+        100;
+
+
+    progressBar.style.width =
+        percentage + "%";
+
+}
+
+
+/* =========================
+   INICIAR
+========================= */
+
+function startTimer() {
+
+    if (isRunning) return;
+
+    isRunning = true;
+
+
+    timerInterval =
+        setInterval(() => {
+
+            remainingSeconds--;
+
+            updateDisplay();
+
+
+            if (remainingSeconds <= 0) {
+
+                finishSession();
+
+            }
+
+        }, 1000);
+
+}
+
+
+/* =========================
+   PAUSAR
+========================= */
+
+function pauseTimer() {
+
+    clearInterval(timerInterval);
+
+    isRunning = false;
+
+}
+
+
+/* =========================
+   REINICIAR
+========================= */
+
+function resetTimer() {
+
+    pauseTimer();
+
+
+    remainingSeconds =
+        (isStudyTime
+            ? studyMinutes
+            : breakMinutes) * 60;
+
+
+    totalSeconds =
+        remainingSeconds;
+
+
+    updateDisplay();
+
+}
+
+
+/* =========================
+   TERMINAR SESION
+========================= */
+
+function finishSession() {
+
+    pauseTimer();
+
+
+    if (isStudyTime) {
+
+        const oldSessions =
+            Number(
+                localStorage.getItem("sessions") || 0
+            );
+
+
+        const oldMinutes =
+            Number(
+                localStorage.getItem("minutes") || 0
+            );
+
+
+        localStorage.setItem(
+            "sessions",
+            oldSessions + 1
+        );
+
+
+        localStorage.setItem(
+            "minutes",
+            oldMinutes + studyMinutes
+        );
+
+
+        updateStats();
+
+
+        isStudyTime = false;
+
+
+        modeElement.textContent =
+            "☕ Tiempo de descanso";
+
+    }
+
+    else {
+
+        isStudyTime = true;
+
+
+        modeElement.textContent =
+            "🧠 Tiempo de estudio";
+
+    }
+
+
+    totalSeconds =
+        (isStudyTime
+            ? studyMinutes
+            : breakMinutes) * 60;
+
+
+    remainingSeconds =
+        totalSeconds;
+
+
+    updateDisplay();
+
+}
+
+
+/* =========================
+   PRESETS
+========================= */
+
+function setPreset(study, rest) {
+
+    studyMinutes = study;
+
+    breakMinutes = rest;
+
+
+    document.getElementById(
+        "studyInput"
+    ).value = study;
+
+
+    document.getElementById(
+        "breakInput"
+    ).value = rest;
+
+
+    isStudyTime = true;
+
+
+    modeElement.textContent =
+        "🧠 Tiempo de estudio";
+
+
+    resetTimer();
+
+}
+
+
+/* =========================
+   TIEMPO PERSONALIZADO
+========================= */
+
+function applyCustomTime() {
+
+    const study =
+        Number(
+            document.getElementById(
+                "studyInput"
+            ).value
+        );
+
+
+    const rest =
+        Number(
+            document.getElementById(
+                "breakInput"
+            ).value
+        );
+
+
+    if (study < 1 || rest < 1) {
+
+        alert(
+            "Ingresá tiempos válidos."
+        );
+
+        return;
+
+    }
+
+
+    studyMinutes = study;
+
+    breakMinutes = rest;
+
+    isStudyTime = true;
+
+
+    modeElement.textContent =
+        "🧠 Tiempo de estudio";
+
+
+    resetTimer();
+
+}
+
+
+/* =========================
+   ESTADISTICAS
+========================= */
+
+function updateStats() {
+
+    document.getElementById(
+        "sessions"
+    ).textContent =
+        localStorage.getItem(
+            "sessions"
+        ) || 0;
+
+
+    document.getElementById(
+        "minutes"
+    ).textContent =
+        localStorage.getItem(
+            "minutes"
+        ) || 0;
+
+}
+
+
+/* =========================
+   CARGAR AMBIENTE DESDE URL
+========================= */
+
+function loadEnvironmentFromURL() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const environment =
+        params.get("ambiente");
+
+
+    if (
+        environment &&
+        environments[environment]
+    ) {
+
+        changeEnvironment(
+            environment
+        );
+
+    }
+
+    else {
+
+        const saved =
+            localStorage.getItem(
+                "selectedEnvironment"
+            );
+
+
+        if (
+            saved &&
+            environments[saved]
+        ) {
+
+            changeEnvironment(saved);
+
+        }
+
+        else {
+
+            changeEnvironment("rain");
+
+        }
+
+    }
+
+}
+
+
+/* =========================
+   INICIAR PAGINA
+========================= */
+
+updateStats();
+
+updateDisplay();
+
+loadEnvironmentFromURL();
+
+</script>
+
+</body>
+</html>
